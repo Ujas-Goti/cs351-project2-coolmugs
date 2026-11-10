@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import Navbar from './components/navigationbar'
 import Home from './views/Home'
@@ -8,7 +8,7 @@ import Account from './views/Account'
 import CreateAccount from './views/CreateAccount'
 import Cart from './views/Cart'
 
-import products from './data/products.json'
+
 
 function App() {
   const [view, setView] = useState('home')
@@ -16,6 +16,15 @@ function App() {
   const [selectedProduct, setSelectedProduct] = useState(null)
 
   const [cartItems, setCartItems] = useState([])
+  const [products, setProducts] = useState([])
+
+// Load the shop from Express instead of the local JSON file.
+  useEffect(() => {
+    fetch('/api/products', { credentials: 'include' })
+      .then((response) => response.json())
+      .then((data) => setProducts(data))
+      .catch(() => setProducts([]))
+  }, [])
 
   function openProduct(product) {
     setSelectedProduct(product)
