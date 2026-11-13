@@ -79,19 +79,48 @@ function CreateAccount({ setView }) {
     return newErrors
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event){
     event.preventDefault()
-
     const validationErrors = validateForm()
 
-    if (Object.keys(validationErrors).length > 0) {
+    if (Object.keys(validationErrors).length > 0){
       setErrors(validationErrors)
       setSuccess('')
-      return
+        return
+      
     }
-
     setErrors({})
-    setSuccess('Account creation success!')
+    setSuccess('')
+
+    try{
+      //Send HTTP request express endpoint /api/accounts
+      const response = await fetch('/api/accounts', {
+        method: 'POST', 
+        credentials: 'include', //lets browser send/receive session cookie
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData) //convert form info to json for http traversal
+      })
+
+      //convert express json response to JS object
+      const data = await response.json()
+
+      if (!response.ok){
+        setErrors({
+          server: data.error || 'Account creation failed.'
+        })
+        return
+      }
+
+      //Account creation success message then redirection to login page.
+      alert(data.message || 'Account Created. Please Log In.')
+      setView('account')
+    } catch (error) {
+      setErrors({
+        server: 'Unable to reach server.'
+      })
+    }
   }
 
   return (
@@ -269,7 +298,16 @@ function CreateAccount({ setView }) {
               {errors.phone}
             </div>
           )}
+
+         
         </div>
+        
+        {errors.server && ( //server error message
+          <div className="alert alert-danger">
+            {errors.server}
+          </div>
+        )}
+
 
         {success && (
           <div className="alert alert-success">

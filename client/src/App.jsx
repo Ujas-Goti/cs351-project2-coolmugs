@@ -11,7 +11,9 @@ import Cart from './views/Cart'
 
 
 function App() {
-  const [view, setView] = useState('home')
+  const [view, setView] = useState(
+    () => sessionStorage.getItem('currentView') || 'home'
+  )
 
   const [selectedProduct, setSelectedProduct] = useState(null)
 
@@ -25,6 +27,14 @@ function App() {
       .then((data) => setProducts(data))
       .catch(() => setProducts([]))
   }, [])
+
+  
+  // save the current page so refresh stays on the same view
+  useEffect(() => {
+    sessionStorage.setItem('currentView', view)
+  }, [view])
+
+
 
   function openProduct(product) {
     setSelectedProduct(product)
