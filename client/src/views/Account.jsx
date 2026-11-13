@@ -213,31 +213,93 @@ if (user && showOrders) {
 
       {!ordersError && orders.length > 0 && (
         <div className="mt-4">
-          {orders.map((order) => (
-            <div
-              className="card mb-3"
-              key={order._id || order.id}
-            >
-              <div className="card-body">
-                <p>
-                  <strong>Order ID:</strong>{' '}
-                  {order._id || order.id}
-                </p>
+      {orders.map((order) => (
+  <div
+    className="card mb-3"
+    key={order._id || order.id}
+  >
+    <div className="card-body">
+      <h5 className="card-title">Order Details</h5>
 
-                <p>
-                  <strong>Date:</strong>{' '}
-                  {order.createdAt || order.date || 'Not available'}
-                </p>
+      <p>
+        <strong>Order ID:</strong>{' '}
+        {order._id || order.id}
+      </p>
 
-                <p>
-                  <strong>Total:</strong>{' '}
-                  {typeof order.total === 'number'
-                    ? `$${order.total.toFixed(2)}`
-                    : order.total || 'Not available'}
-                </p>
-              </div>
+      <p>
+        <strong>Date:</strong>{' '}
+        {order.orderDate
+          ? new Date(order.orderDate).toLocaleString()
+          : 'No date available'}
+      </p>
+
+      <p>
+        <strong>Status:</strong>{' '}
+        {order.status || 'Submitted'}
+      </p>
+
+      <hr />
+
+      <h6>Items Purchased</h6>
+
+      {order.items && order.items.length > 0 ? (
+        order.items.map((item, index) => (
+          <div
+            className="d-flex align-items-center mb-3"
+            key={`${item.productId}-${index}`}
+          >
+            <img
+              src={item.image}
+              alt={item.name}
+              style={{
+                width: '75px',
+                height: '75px',
+                objectFit: 'cover'
+              }}
+              className="rounded me-3"
+            />
+
+            <div>
+              <strong>{item.name}</strong>
+              <p className="mb-0">
+                Quantity: {item.quantity}
+              </p>
+              <p className="mb-0">
+                Price: ${(item.unitPrice || 0).toFixed(2)}
+              </p>
+              <p className="mb-0">
+                Line Total: ${(item.lineTotal || 0).toFixed(2)}
+              </p>
             </div>
-          ))}
+          </div>
+        ))
+      ) : (
+        <p>No item details available.</p>
+      )}
+
+      <hr />
+
+      <h6>Shipping Address</h6>
+
+      {order.shippingAddress ? (
+        <p>
+          {order.shippingAddress.street}<br />
+          {order.shippingAddress.city},{' '}
+          {order.shippingAddress.state}{' '}
+          {order.shippingAddress.zip}
+        </p>
+      ) : (
+        <p>No shipping address available.</p>
+      )}
+
+      <hr />
+
+      <h5 className="text-end">
+        Total: ${Number(order.total || 0).toFixed(2)}
+      </h5>
+    </div>
+  </div>
+      ))}
         </div>
       )}
 

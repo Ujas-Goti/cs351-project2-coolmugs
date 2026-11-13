@@ -1,7 +1,8 @@
+
 import CartItem from '../components/CartItem'
 
 function Cart({
-  cartItems= [],
+  cartItems = [],
   increaseQuantity,
   decreaseQuantity,
   removeItem,
@@ -23,7 +24,6 @@ function Cart({
     return (
       <div className="container py-5">
         <h1>Shopping Cart</h1>
-
         <p>Your cart is currently empty.</p>
 
         <button
@@ -38,10 +38,7 @@ function Cart({
 
   return (
     <div className="container py-5">
-
-      <h1 className="mb-4">
-        Shopping Cart
-      </h1>
+      <h1 className="mb-4">Shopping Cart</h1>
 
       {cartItems.map((item) => (
         <CartItem
@@ -54,22 +51,25 @@ function Cart({
       ))}
 
       <div className="text-end mt-4">
-
         <p>
           Total Items: <strong>{totalItems}</strong>
         </p>
 
-        <h3>
-          Subtotal: ${subtotal.toFixed(2)}
-        </h3>
+        <h3>Subtotal: ${subtotal.toFixed(2)}</h3>
 
         <button
-          className="btn btn-outline-dark mt-3"
+          className="btn btn-outline-dark mt-3 me-2"
           onClick={() => setView('shop')}
         >
           Continue Shopping
         </button>
 
+        <button
+          className="btn btn-dark mt-3"
+          onClick={() => setView('checkout')}
+        >
+          Proceed to Checkout
+        </button>
       </div>
     </div>
   )

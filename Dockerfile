@@ -1,17 +1,26 @@
-FROM node:20
+
+# Build the React frontend.
+FROM node:22-alpine AS client-build
+
+WORKDIR /app/client
+
+COPY client/package*.json ./
+RUN npm install
+
+COPY client/ ./
+RUN npm run build
+
+# Prepare the Express backend.
+FROM node:22-alpine
+
 WORKDIR /app
 
-COPY client/package.json client/package-lock.json ./client/
-COPY server/package.json server/package-lock.json ./server/
-RUN cd client && npm ci
-RUN cd server && npm ci
+COPY server/package*.json ./server/
+RUN cd server && npm install --omit=dev
 
-COPY client ./client
-COPY server ./server
-RUN cd client && npm run build
+COPY server/ ./server/
+COPY --from=client-build /app/client/dist ./client/dist
 
-ENV NODE_ENV=production
-WORKDIR /app/server
-ENV PORT=8080
 EXPOSE 8080
-CMD ["node", "server.js"]
+
+CMD ["npm", "start", "--prefix", "server"]

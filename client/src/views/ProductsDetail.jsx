@@ -21,26 +21,34 @@ function ProductDetail({ product, setView, addToCart }) {
     )
   }
 
-  function handleAddToCart() {
+  async function handleAddToCart() {
     if (!selectedColor || !selectedCapacity) {
       setError('Please select a color and capacity.')
       return
     }
 
-    if (quantity < 1) {
-      setError('Quantity must be at least 1.')
+    if (
+      !Number.isInteger(quantity) ||
+      quantity < 1 ||
+      quantity > product.quantityInStock
+    ) {
+      setError('Please enter a valid quantity within available stock.')
       return
     }
 
-    addToCart(
-      product,
-      selectedColor,
-      selectedCapacity,
-      quantity
-    )
+    try {
+      await addToCart(
+        product,
+        selectedColor,
+        selectedCapacity,
+        quantity
+      )
 
-    setError('')
-    setView('cart')
+      setError('')
+      setView('cart')
+    } catch (error) {
+      setError(error.message || 'Unable to add item to cart.')
+    }
   }
 
   return (
